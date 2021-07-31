@@ -59,6 +59,7 @@ void main()
 
    
    if(currentEffect == 1){
+    //https://www.shadertoy.com/view/ltGyz1
     float weights = 0.;
     vec3 bloom = vec3(0);
     const int kernel = 10;
@@ -110,26 +111,16 @@ void main()
     result = 1.0-result ;
    
     }
-   else if(currentEffect == 3){
-   
-   // Pencil
-   
+   else if(currentEffect == 3){  
    vec3 col = tex.rgb;
-   
    vec2 r = random(TexCoords+vec2(u_time/1000000.0));
    r.x *= PI2;
    vec2 cr = vec2(sin(r.x),cos(r.x))*sqrt(r.y);
-   
    vec3 blurred = texture(finalImage, TexCoords + cr * (vec2(mSize) / vec2(1920.0,1080.0)) ).rgb;
-
    vec3 inv = vec3(1.0) - blurred; 
-    // color dodge
-    vec3 lighten = colorDodge(col, inv);
-    // grey scale
-    vec3 res = vec3(greyScale(lighten));
-    
-    // more contrast
-    res = vec3(pow(res.x, 3.0)); 
+   vec3 lighten = colorDodge(col, inv);
+   vec3 res = vec3(greyScale(lighten));
+    res = vec3(pow(res.x, 5.0)); 
     //res = clamp(res * 0.7 + 0.3 * res * res * 1.2, 0.0, 1.0);
 
    result = vec4(res,1.0) ;
