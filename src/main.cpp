@@ -41,7 +41,7 @@ int currentEffect = 0;
 // Point
 float seuil = 10;
 float transition = 3.0f;
-float ambient = 0.3f;
+float ambient = 0.8f;
 
 
 int invertSwap(bool& retflag) {
