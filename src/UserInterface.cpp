@@ -16,6 +16,13 @@ void UserInterface::configure()
 		ImGui::Text("Application average %.1f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
         ImGui::SetWindowPos(ImVec2(0, 0), ImGuiCond_Once);
         ImGui::SetWindowSize(ImVec2((float)SCR_WIDTH*0.2f, (float)SCR_HEIGHT));
+
+
+		ImGui::Dummy(ImVec2(0.0f, 10.0f));
+		ImGui::Dummy(ImVec2(0.0f, 10.0f));
+		ImGui::SliderFloat("Ambient", _ambientStrength, 0.01f, 1.0f);
+
+
         ImGui::Dummy(ImVec2(0.0f, 10.0f));
 		ImGui::Checkbox("SSAO", _ssao);
 		if (*_ssao) {
@@ -26,13 +33,13 @@ void UserInterface::configure()
 		ImGui::Dummy(ImVec2(0.0f, 10.0f));
 		ImGui::SameLine();
 
-		if (ImGui::RadioButton("Bloom", *_currentEffect == 1)) {
+		/*if (ImGui::RadioButton("Bloom", *_currentEffect == 1)) {
 			if (*_currentEffect == 1) *_currentEffect = 0;
 			else *_currentEffect = 1;
 		}
 		ImGui::SameLine();
 		ImGui::Dummy(ImVec2(0.0f, 10.0f)); 
-		ImGui::SameLine();
+		ImGui::SameLine();*/
 
 		if (ImGui::RadioButton("Sobel", *_currentEffect == 2)) {
 			if (*_currentEffect == 2) *_currentEffect = 0;

@@ -26,6 +26,7 @@ public:
 
 	bool* _ssao;
 	float* _ssaoRadius;
+	float* _ambientStrength;
 
 	int* _currentEffect;
 };

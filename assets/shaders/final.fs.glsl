@@ -49,17 +49,9 @@ void main()
    vec4 tex = texture(finalImage, TexCoords);
    
    vec4 result = tex;
-
-   /*
-   result= vec4(vec3(greyScale(result.rgb)), 1.0);
-
-   float level = floor(result.x * levels);
-   result = vec4( texture(albedoImage, TexCoords).rgb * vec3(level/levels), 1.0);
-   */
-
    
    if(currentEffect == 1){
-    //https://www.shadertoy.com/view/ltGyz1
+    /*//https://www.shadertoy.com/view/ltGyz1
     float weights = 0.;
     vec3 bloom = vec3(0);
     const int kernel = 10;
@@ -73,8 +65,9 @@ void main()
         }
     }
     
-    result.rgb += bloom*0.3 / weights;
+    result.rgb += bloom*0.3 / weights;*/
    }
+
    else if (currentEffect == 2){
 
    // SOBEL
@@ -108,10 +101,12 @@ void main()
         }
     }
 
-    result = 1.0-result ;
+    result = result ;
    
     }
    else if(currentEffect == 3){  
+   // based on https://www.shadertoy.com/view/ldSyzV
+
    vec3 col = tex.rgb;
    vec2 r = random(TexCoords+vec2(u_time/1000000.0));
    r.x *= PI2;
@@ -121,7 +116,6 @@ void main()
    vec3 lighten = colorDodge(col, inv);
    vec3 res = vec3(greyScale(lighten));
     res = vec3(pow(res.x, 5.0)); 
-    //res = clamp(res * 0.7 + 0.3 * res * res * 1.2, 0.0, 1.0);
 
    result = vec4(res,1.0) ;
    

@@ -1,1 +1,1 @@
-# Deferred & post-process in OpenGL
+# Defered & post-process in OpenGL

@@ -38,6 +38,12 @@ float ssaoRadius = 0.5;
 int currentEffect = 0;
 
 
+// Point
+float seuil = 10;
+float transition = 3.0f;
+float ambient = 0.3f;
+
+
 int invertSwap(bool& retflag) {
     retflag = true;
     swapInterval = !swapInterval;
@@ -124,6 +130,7 @@ int main()
         ui._ssao = &ssao;
         ui._ssaoRadius = &ssaoRadius;
         ui._currentEffect = &currentEffect;
+        ui._ambientStrength = &ambient;
         retval = invertSwap(retflag); if (retflag) return retval;
     }
 
@@ -225,6 +232,21 @@ int main()
     }
 
 
+    // generate Lights
+    int nr_lights = 32;
+    std::vector<glm::vec4> lights_positions;
+    float y = 3.0;
+    float x = -60.0;
+
+    for (int i = 0; i < nr_lights; i++) {
+        x += 15;
+        if (x > 60) {
+            x = -60.0;
+            y += 15;
+        }
+        lights_positions.emplace_back(glm::vec4(x, y , 0.0, 1.0));
+    }
+
     // render loop
     while (!glfwWindowShouldClose(window))
     {
@@ -297,15 +319,20 @@ int main()
             glBindFramebuffer(GL_FRAMEBUFFER, recompositionFBO);
             shaderLightingPass.use();
             // send light relevant uniforms
-            glm::vec3 lightPosView = glm::vec3(camera.GetViewMatrix() * glm::vec4(glm::vec3(0.0, abs(sin(glfwGetTime()) * 5.0), 0.0), 1.0));
-            shaderLightingPass.setVec3("light.Position", lightPosView);
-            shaderLightingPass.setVec3("light.Color", glm::vec3(1.0));
             // Update attenuation parameters
             const float linear = 0.09;
             const float quadratic = 0.032;
-            shaderLightingPass.setFloat("light.Linear", linear);
-            shaderLightingPass.setFloat("light.Quadratic", quadratic);
-            shaderLightingPass.setBool("useSSAO", ssao);
+            for (int i = 0; i < nr_lights; i++) {
+                glm::vec3 lightPosView = glm::vec3(camera.GetViewMatrix() * lights_positions[i]);
+                shaderLightingPass.setVec3("u_lights[" + std::to_string(i) + "].Position", lightPosView);
+                shaderLightingPass.setVec3("u_lights[" + std::to_string(i) + "].Color", glm::vec3(1.0));
+                shaderLightingPass.setFloat("u_lights[" + std::to_string(i) + "].Linear", linear);
+                shaderLightingPass.setFloat("u_lights[" + std::to_string(i) + "].Quadratic", quadratic);
+                shaderLightingPass.setFloat("u_lights[" + std::to_string(i) + "].seuil", seuil);
+                shaderLightingPass.setFloat("u_lights[" + std::to_string(i) + "].transition", transition);
+            }
+            shaderLightingPass.setFloat("u_ambient", ambient);
+            shaderLightingPass.setBool("u_useSSAO", ssao);
             glActiveTexture(GL_TEXTURE0);
             glBindTexture(GL_TEXTURE_2D, TexPosition);
             glActiveTexture(GL_TEXTURE1);
@@ -396,8 +423,20 @@ void processInput(GLFWwindow *window)
         requestSSAO = false;
         ssao = !ssao;
     }
-
-
+    // seuil
+    if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
+        seuil += 0.1;
+    }
+    if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
+        seuil -= 0.1;
+    }
+    if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
+        transition += 0.01;
+    }
+    if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
+        transition -= 0.01;
+        if (transition < 0.0) transition = 0.0;
+    }
     
 }
 
